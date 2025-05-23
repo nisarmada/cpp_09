@@ -4,7 +4,7 @@ Date::Date() : _year(2009), _month(1), _day(2) {}
 
 Date::Date(const std::string& date) { //maybe we need to move all the validation logic into a seperate funciton and only call the constructor in case it is correct
 	if (date.length() != 10 || date[4] != '-' || date[7] != '-')
-		throw (std::invalid_argument("Argument format expected: YYYY-MM-DD\n"));
+		throw (std::invalid_argument("Argument format expected: YYYY-MM-DD " + date));
 	std::string yearStr = date.substr(0, 4);
 	std::string monthStr = date.substr(5, 2);
 	std::string dayStr = date.substr(8, 2);
@@ -16,7 +16,7 @@ Date::Date(const std::string& date) { //maybe we need to move all the validation
 	_day = std::stoi(dayStr);
 	
 	if (!isValid())
-		throw (std::invalid_argument("Error: Date is not valid\n")); 
+		throw (std::invalid_argument("Error: Date is not valid: " + date)); 
 }
 
 Date::~Date() {}

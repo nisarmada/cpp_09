@@ -22,4 +22,6 @@ class BitcoinExchange {
 		BitcoinExchange(const BitcoinExchange& other);
 		BitcoinExchange& operator=(const BitcoinExchange& other);
 
+		void processInput(const std::string& file);
+		
 };

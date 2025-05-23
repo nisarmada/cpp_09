@@ -1,11 +1,17 @@
 #include "../include/BitcoinExchange.hpp"
 #include "../include/Date.hpp"
 
-int main () {
+int main (int ac, char* av[]) {
+	if (ac != 2)
+	{
+		std::cerr << "Wrong amount of arguments. Please follow the format ./btc [filename]" << std::endl;
+		return 1;
+	}
 	try {
-		Date date("1999-03-03");
-		std::cout << date << std::endl;
-		BitcoinExchange b("data.csv");
+		// Date date("1999-03-03");
+		// std::cout << date << std::endl;
+		BitcoinExchange btc("data.csv");
+		btc.processInput(av[1]);
 	}
 	catch (std::exception& e) {
 		std::cerr << "Caught error in main: " << e.what() << std::endl;	}
