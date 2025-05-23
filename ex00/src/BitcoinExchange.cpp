@@ -50,6 +50,8 @@ void BitcoinExchange::loadDatabase(const std::string& database) {
 
 static std::string trim(std::string& string) {
 	size_t start = string.find_first_not_of(" \t\r\f");
+	if (start == std::string::npos)
+		throw std::invalid_argument("Date is missing");
 	size_t end = string.find_last_not_of(" \t\r\f");
 	std::string trimmedStr = string.substr(start, end - start + 1);
 	return (trimmedStr);
