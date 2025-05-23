@@ -1,7 +1,11 @@
 #pragma once
 
-#include "BitcoinExchange.hpp"
-
+#include <iostream>
+#include <string>
+#include <stdexcept>
+#include <algorithm>
+#include <map>
+#include <iomanip>
 
 class Date {
 	private:
