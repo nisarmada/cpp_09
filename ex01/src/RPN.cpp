@@ -80,7 +80,7 @@ void RPN::parseExpression(const std::string& expression) {
 			}
 			if (token == "+") {
 				additionOperation();
-				std::cout << "addition result is: " << Stack.top() << std::endl;
+				// std::cout << "addition result is: " << Stack.top() << std::endl;
 			}
 			else if (token == "-") {
 				subtractionOperation();
@@ -102,7 +102,7 @@ void RPN::parseExpression(const std::string& expression) {
 					throw std::invalid_argument("Error input is invalid " + token);
 				int number = std::stoi(token);
 				this->Stack.push(number);
-				std::cout << "number added: " << number << std::endl;
+				// std::cout << "number added: " << number << std::endl;
 			}
 			catch (std::exception& e) {
 				std::cerr << "Error: argument is not an int " << e.what() << std::endl;
@@ -111,4 +111,5 @@ void RPN::parseExpression(const std::string& expression) {
 	}
 	if (this->Stack.size() > 1)
 		throw std::runtime_error("Invalid number of arguments in the stack");
+	std::cout << this->Stack.top() << std::endl;
 }
