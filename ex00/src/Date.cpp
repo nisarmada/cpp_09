@@ -84,6 +84,6 @@ bool Date::isValid() const {
 
 std::ostream& operator<<(std::ostream& stream, const Date& date) {
 	stream << date.getYear() << "-" << std::setw(2) << std::setfill('0') << date.getMonth() << "-" << \
-		std::setw(2) << std::setfill('0') << date.getDay() << std::endl;
+		std::setw(2) << std::setfill('0') << date.getDay();
 	return stream;
 }

@@ -23,5 +23,6 @@ class BitcoinExchange {
 		BitcoinExchange& operator=(const BitcoinExchange& other);
 
 		void processInput(const std::string& file);
-		
+		void searchDate(const Date& dateToFind, float value);
+		void processLine(const std::string& line);
 };

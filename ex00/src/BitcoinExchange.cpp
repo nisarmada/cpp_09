@@ -36,7 +36,7 @@ void BitcoinExchange::loadDatabase(const std::string& database) {
 	if (!file.is_open())
 		throw std::runtime_error("Error: Couldn't open the file\n");
 	std::getline(file, line);
-	std::cout << line << std::endl;
+	// std::cout << line << std::endl;
 	while (std::getline(file, line)) {
 		try {
 			parseLine(line);
@@ -57,7 +57,22 @@ static std::string trim(std::string& string) {
 	return (trimmedStr);
 }
 
-static void processLine(const std::string& line) {
+void BitcoinExchange::searchDate(const Date& dateToFind, float value) {
+	std::map<Date, float>::const_iterator it = this->exchangeRate.lower_bound(dateToFind);
+
+	if (it == exchangeRate.end()) {
+		it--;
+	}
+	else if (it == exchangeRate.begin() && dateToFind < it->first) {
+		std::cout << "Error: date is before the release of bitcoin" << std::endl;
+		return ;
+	}
+	else if (it != exchangeRate.begin() && dateToFind < it->first)
+		it--;
+	std::cout << it->first << " => " << it->second << " => " << it->second * value << std::endl;
+}
+
+void BitcoinExchange::processLine(const std::string& line) {
 	std::istringstream	sline(line);
 	std::string			dateStr;
 	std::string				valueStr;
@@ -66,10 +81,12 @@ static void processLine(const std::string& line) {
 	std::getline(sline, dateStr, '|');
 	std::getline(sline, valueStr);
 	Date date(trim(dateStr));
-	std::cout << "date iss ; " << dateStr << std::endl;
+	// std::cout << "date iss ; " << dateStr << std::endl;
 	std::istringstream sValue(valueStr);
 	if (!(sValue >> value) || !(sValue.eof()) || value < 0 || value > 1000)
-		throw std::invalid_argument("Error: Bitcoin amount is wrong " + valueStr);
+		throw std::invalid_argument("Error: Bitcoin amount is out of scope: " + valueStr);
+	// std::cout << "value is : " << value << std::endl;
+	searchDate(date, value);
 }
 
 void BitcoinExchange::processInput(const std::string& file) {
@@ -77,11 +94,16 @@ void BitcoinExchange::processInput(const std::string& file) {
 	std::string line;
 
 	if (!input.is_open())
-		throw std::runtime_error("Error: Couldn't open text file\n");
+		throw std::runtime_error("Error: Couldn't open"  + file);
 	std::getline(input, line);
 	while (std::getline(input, line)) {
 		if (line.empty())
 			continue;
-		processLine(line);
+		try {
+			processLine(line);
+		}
+		catch (std::exception& e) {
+			std::cerr << "Error: " << e.what() << std::endl;
+		}
 	}
 }
