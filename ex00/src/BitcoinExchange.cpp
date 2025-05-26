@@ -8,6 +8,15 @@ BitcoinExchange::BitcoinExchange(const std::string& database) {
 
 BitcoinExchange::~BitcoinExchange() {}
 
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) : exchangeRate(other.exchangeRate) {}
+
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) {
+	if (this != &other) {
+		exchangeRate = other.exchangeRate;
+	}
+	return (*this);
+}
+
 void BitcoinExchange::parseLine(const std::string& line) { //We definitely need to check for edge cases
 	if (line.empty())
 		return ;
