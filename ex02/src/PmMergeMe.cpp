@@ -78,7 +78,23 @@ void PmMergeMe::recursiveSort(std::vector<int>& data, size_t blockSize, int leve
 void PmMergeMe::sortAndDisplayResults() {
 	std::vector<int> tempVector = _vector;
 
+	if (tempVector.size() % 2 != 0) {
+		_oddElement = tempVector.back();
+		tempVector.pop_back();
+	}
 	recursiveSort(tempVector, 1);
+	std::vector<int> mainChain;
+	std::vector<int> pend;
+
+	for (size_t i = 0; i < tempVector.size(); i += 2) {
+		mainChain.push_back(tempVector[i + 1]);
+		pend.push_back(tempVector[i]);
+	}
+	std::cout << "main chain" << std::endl;
+	printVector(mainChain, 0);
+	std::cout << "Pend" << std::endl;
+	printVector(pend, 0);
+	
 }
 
 void runPmMerge(char* av[]) {

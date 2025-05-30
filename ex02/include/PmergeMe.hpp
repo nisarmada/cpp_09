@@ -12,6 +12,7 @@ class PmMergeMe {
 	private:
 		std::vector<int> _vector;
 		void recursiveSort(std::vector<int>& initialVector, size_t blockSize, int level = 1);
+		int _oddElement = -1;
 	public:
 		PmMergeMe();
 		PmMergeMe(const std::vector<int>& sequence);
