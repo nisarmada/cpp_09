@@ -30,10 +30,13 @@ std::vector<int> convertToVector(char* av[]) {
 	return vector;
 }
 
-void printVector(std::vector<int>& vector) {
+void printVector(std::vector<int>& vector, size_t blockSize = 0) {
 	std::cout << "{";
-	for (unsigned int i = 0; vector[i]; i++) {
+	for (unsigned int i = 0; i < vector.size(); i++) {
 		
+		if (blockSize > 0 && i > 0 && i % blockSize == 0) {
+			std::cout << "| ";
+		}
 		std::cout << vector[i];
 		if (i == vector.size() - 1)
 			break;
