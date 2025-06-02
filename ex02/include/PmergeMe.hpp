@@ -22,6 +22,7 @@ class PmMergeMe {
 		PmMergeMe& operator=(const PmMergeMe& other);
 
 		void sortAndDisplayResults();
+		std::vector<int> generateJacobsthal(int n);
 };
 
 void runPmMerge(char* av[]);
