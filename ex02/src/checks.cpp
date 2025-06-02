@@ -23,7 +23,7 @@ std::vector<int> convertToVector(char* av[]) {
 			throw std::invalid_argument("Negative integer is not allowed " + currentElementStr);
 		}
 		if (find(vector.begin(), vector.end(), currentElementInt) != vector.end()) {
-			throw std::invalid_argument("Duplicate number found");
+			throw std::invalid_argument("Duplicate number found " + currentElementStr);
 		}
 		vector.push_back(currentElementInt);
 	}
