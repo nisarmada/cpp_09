@@ -17,25 +17,24 @@ PmMergeMe& PmMergeMe::operator=(const PmMergeMe& other) {
 }
 
 void PmMergeMe::recursiveSort(std::vector<int>& data, size_t blockSize, int level){
-	if (blockSize * 2 > data.size())
+	if (blockSize * 2 > data.size()) // here we can add the insertion recursively
 		return ;
-	// std::cout << "BEFORE LEVEL " << level << std::endl; 
-	for (size_t i = 0; i + blockSize < data.size(); i += 2 * blockSize) {
+	std::cout << "BEFORE LEVEL " << level << std::endl; 
+	for (size_t i = 0; i + (2 *blockSize) <= data.size(); i += 2 * blockSize) {
 		size_t block1end = i + blockSize - 1;
 		size_t block2end = std::min(i + 2 * blockSize - 1, data.size() - 1);
-		// printVector(data, level);
+		printVector(data, blockSize);
 		if (level == 1) {
 			std::swap(data[block1end], data[block2end]);
 		}
 		else if (data[block1end] > data[block2end]) {
-			// std::cout << "BBBBBblock 2 start " << data[block2end] << std::endl;
-			// std::cout << "BBBBBblock 2 end " << data[block1end] << std::endl;
+			std::cout << "COMPARING " << data[block1end] << " WITH " << data[block2end] << std::endl;
 			std::rotate(data.begin() + i, data.begin() + i + blockSize, data.begin() + block2end + 1);
 		}
 		
 	}
-	// std::cout << "AFTER LEVEL " << level << std::endl; 
-	// printVector(data, level);
+	std::cout << "AFTER LEVEL " << level << std::endl; 
+	printVector(data, blockSize);
 	recursiveSort(data, 2 * blockSize, level + 1);
 }
 
@@ -47,6 +46,8 @@ void PmMergeMe::sortAndDisplayResults() {
 		tempVector.pop_back();
 	}
 	recursiveSort(tempVector, 1);
+	std::cout << "YPPPP" << std::endl;
+	printVector(tempVector);
 }
 
 void runPmMerge(char* av[]) {
