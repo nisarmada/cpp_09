@@ -39,31 +39,56 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 	std::vector<int> main;
 	std::vector<int> pend;
 	std::vector<int> remaining;
+	bool isMain = true;
 	size_t i;
 	std::cout << "block size is " << blockSize << std::endl;
 	for (i = 0; i < 2 * blockSize; i++) { //a1
 		main.push_back(partiallySortedVector[i]);
 		// std::cout << "a1: " << partiallySortedVector[i] << std::endl;
 	}
+	for (size_t j = 0; j < blockSize; j++) {
+		pend.push_back(partiallySortedVector[i++]);
+	}
+	while (i < partiallySortedVector.size()) {
+		// size_t steps = 0;
+		if (i + blockSize <= partiallySortedVector.size()) {
+			if (isMain) {
+				for (size_t j = 0; j < blockSize; j++) {
+					main.push_back(partiallySortedVector[i]);
+					i++;
+					// steps++;
+				}
+			}
+			else{
+				for (size_t j = 0; j < blockSize; j++) {
+					pend.push_back(partiallySortedVector[i]);
+					i++;
+					// steps++;
+				}
+			}
+		}
+		else {
+			break;
+		}
+		isMain = !isMain;
+		// std::cout << "PPPPPPPPi: " << i << "size: " << partiallySortedVector.size() << std::endl;
+
+	}
 	std::cout << "main: ";
 	printVector(main, blockSize);
 	std::cout << std::endl;
-	while (partiallySortedVector.size() - i > blockSize) {
-		pend.push_back(partiallySortedVector[i]);
-		i++;
-	}
 	std::cout << "pend: ";
 	printVector(pend, blockSize);
 	std::cout << std::endl;
-	if (partiallySortedVector[i] && partiallySortedVector.size() - i < blockSize) {
-		while (partiallySortedVector[i]) {
-			remaining.push_back(partiallySortedVector[i]);
-			i++;
-		}
+	while (i < partiallySortedVector.size()) {
+		remaining.push_back(partiallySortedVector[i]);
+		i++;
 	}
 	std::cout << "remaining: ";
 	printVector(remaining, blockSize);
 	std::cout << std::endl;
+
+	std::vector<int> jacbobsthalSequence = generateJacobsthal(pend.size());
 
 	recursiveInsertion(partiallySortedVector, blockSize / 2);
 }
