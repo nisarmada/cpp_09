@@ -33,16 +33,55 @@ std::vector<int> PmMergeMe::generateJacobsthal(int n) {
 	return jacobsthalNumbers;
 }
 
-void PmMergeMe::recursiveSort(std::vector<int>& data, size_t blockSize, int level){
-	if (blockSize * 2 > data.size()) // here we can add the insertion recursively
+void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size_t blockSize) {
+	if (blockSize == 1)
 		return ;
+	std::vector<int> main;
+	std::vector<int> pend;
+	std::vector<int> remaining;
+	size_t i;
+	std::cout << "block size is " << blockSize << std::endl;
+	for (i = 0; i < 2 * blockSize; i++) { //a1
+		main.push_back(partiallySortedVector[i]);
+		// std::cout << "a1: " << partiallySortedVector[i] << std::endl;
+	}
+	std::cout << "main: ";
+	printVector(main, blockSize);
+	std::cout << std::endl;
+	while (partiallySortedVector.size() - i > blockSize) {
+		pend.push_back(partiallySortedVector[i]);
+		i++;
+	}
+	std::cout << "pend: ";
+	printVector(pend, blockSize);
+	std::cout << std::endl;
+	if (partiallySortedVector[i] && partiallySortedVector.size() - i < blockSize) {
+		while (partiallySortedVector[i]) {
+			remaining.push_back(partiallySortedVector[i]);
+			i++;
+		}
+	}
+	std::cout << "remaining: ";
+	printVector(remaining, blockSize);
+	std::cout << std::endl;
+
+	recursiveInsertion(partiallySortedVector, blockSize / 2);
+}
+
+
+void PmMergeMe::recursiveSort(std::vector<int>& data, size_t blockSize, int level){
+	if (blockSize * 2 > data.size()) {
+		// std::cout << "level-> " << level << std::endl;
+		recursiveInsertion(data, blockSize / 2);
+		return ;
+	} // here we can add the insertion recursively
 	// std::cout << "BEFORE LEVEL " << level << std::endl; 
 	for (size_t i = 0; i + (2 *blockSize) <= data.size(); i += 2 * blockSize) {
 		size_t block1end = i + blockSize - 1;
 		size_t block2end = std::min(i + 2 * blockSize - 1, data.size() - 1);
 		// printVector(data, blockSize);
-		if (level == 1) {
-			std::swap(data[block1end], data[block2end]);
+		if (level == 1 && data[block1end] > data[block2end]) {
+				std::swap(data[block1end], data[block2end]);
 		}
 		else if (data[block1end] > data[block2end]) {
 			// std::cout << "COMPARING " << data[block1end] << " WITH " << data[block2end] << std::endl;
