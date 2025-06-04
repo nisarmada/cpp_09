@@ -17,7 +17,7 @@ PmMergeMe& PmMergeMe::operator=(const PmMergeMe& other) {
 }
 
 std::vector<int> PmMergeMe::generateJacobsthal(int n) {
-	if (n <= 0) {
+	if (n <= 1) {
 		return {};
 	}
 	std::vector<int> jacobsthalNumbers;
@@ -87,9 +87,16 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 	std::cout << "remaining: ";
 	printVector(remaining, blockSize);
 	std::cout << std::endl;
+	size_t pendBlocks = pend.size() / blockSize;
+	int previousJacobsthal = 1;
+	std::vector<int> jacbobsthalSequence = generateJacobsthal(pendBlocks);
+	if (jacbobsthalSequence.size() > 2) {
+		int currentJacobsthal = jacbobsthalSequence[2];
+		int startBlock = std::min(currentJacobsthal, static_cast<int>(pendBlocks));
+		int endBlock = previousJacobsthal + 1;
 
-	std::vector<int> jacbobsthalSequence = generateJacobsthal(pend.size());
-
+		
+	}
 	recursiveInsertion(partiallySortedVector, blockSize / 2);
 }
 
