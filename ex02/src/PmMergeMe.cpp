@@ -42,8 +42,7 @@ void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pe
 		return ;
 	std::vector<int> elementsToPush;
 	for (int currentBlockStart : insertOrder) {
-		// int lastElement = pend[currentBlockStart + blockSize - 1];
-		// auto insertPositionIterator = std::upper_bound(main.begin(), main.end(), lastElement);
+		int lastElement = pend[currentBlockStart + blockSize - 1];
 		std::vector<int> lastElementsMain;
 		for (size_t i = 0; i < main.size(); i += blockSize) { //we might need to clear that every iteration
 			lastElementsMain.push_back(main[i + blockSize - 1]);
@@ -51,6 +50,15 @@ void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pe
 		for (size_t i = 0; i < blockSize; i++) {
 			elementsToPush.push_back(pend[i + currentBlockStart]);
 		}
+		auto lastElementsPosition = std::upper_bound(lastElementsMain.begin(), lastElementsMain.end(), lastElement);
+		int lastElementsIndex = std::distance(lastElementsMain.begin(), lastElementsPosition);
+		int insertIndex = lastElementsIndex * blockSize;
+		main.insert(main.begin() + insertIndex, elementsToPush.begin(), elementsToPush.end());
+		lastElementsMain.clear();
+		elementsToPush.clear();
+		std::cout << "binary search main :-> ";
+		printVector(main);
+		std::cout << std::endl;
 	}
 }
 
@@ -133,6 +141,9 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 	printVector(insertOrder);
 	std::cout << std::endl;
 	performBinarySearch(main, pend, insertOrder, blockSize);
+	for (size_t i = 0; i < remaining.size(); i++) {
+		main.push_back(remaining[i]);
+	}
 	recursiveInsertion(partiallySortedVector, blockSize / 2);
 }
 
