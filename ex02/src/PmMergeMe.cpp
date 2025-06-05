@@ -46,8 +46,10 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 		main.push_back(partiallySortedVector[i]);
 		// std::cout << "a1: " << partiallySortedVector[i] << std::endl;
 	}
-	for (size_t j = 0; j < blockSize; j++) {
-		pend.push_back(partiallySortedVector[i++]);
+	if (i + blockSize <= partiallySortedVector.size()) {
+		for (size_t j = 0; j < blockSize; j++) {
+			pend.push_back(partiallySortedVector[i++]);
+		}
 	}
 	while (i < partiallySortedVector.size()) {
 		// size_t steps = 0;
@@ -89,13 +91,19 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 	std::cout << std::endl;
 	size_t pendBlocks = pend.size() / blockSize;
 	int previousJacobsthal = 1;
+	int pendCount = 0;
+	std::vector<int> insertOrder;
 	std::vector<int> jacbobsthalSequence = generateJacobsthal(pendBlocks);
 	if (jacbobsthalSequence.size() > 2) {
 		int currentJacobsthal = jacbobsthalSequence[2];
 		int startBlock = std::min(currentJacobsthal, static_cast<int>(pendBlocks));
 		int endBlock = previousJacobsthal + 1;
 
-		
+		for (int i = startBlock; i >= endBlock && i > pendCount; --i) {
+			insertOrder.push_back((i - 1) * blockSize);
+		}
+		previousJacobsthal = currentJacobsthal;
+		pendCount = startBlock;
 	}
 	recursiveInsertion(partiallySortedVector, blockSize / 2);
 }
