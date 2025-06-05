@@ -16,6 +16,44 @@ PmMergeMe& PmMergeMe::operator=(const PmMergeMe& other) {
 	return (*this);
 }
 
+std::vector<int> PmMergeMe::calculateInsertOrder(size_t blockSize, size_t pendBlocks) {
+	int previousJacobsthal = 1;
+	int pendCount = 0;
+	std::vector<int> jacbobsthalSequence = generateJacobsthal(pendBlocks);
+	std::vector<int> insertOrder;
+	// std::cout << "Jacobsthal--> " ;
+	// printVector(jacbobsthalSequence);
+	std::cout << std::endl;
+	if (jacbobsthalSequence.size() > 2) {
+		int currentJacobsthal = jacbobsthalSequence[3];
+		int startBlock = std::min(currentJacobsthal, static_cast<int>(pendBlocks));
+		int endBlock = previousJacobsthal + 1;
+		for (int i = startBlock; i >= endBlock && i > pendCount; --i) {
+			insertOrder.push_back((i - 1) * blockSize);
+		}
+		previousJacobsthal = currentJacobsthal;
+		pendCount = startBlock;
+	}
+	return insertOrder;
+}
+
+void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pend, std::vector<int>& insertOrder, size_t blockSize) {
+	if (pend.empty())
+		return ;
+	std::vector<int> elementsToPush;
+	for (int currentBlockStart : insertOrder) {
+		// int lastElement = pend[currentBlockStart + blockSize - 1];
+		// auto insertPositionIterator = std::upper_bound(main.begin(), main.end(), lastElement);
+		std::vector<int> lastElementsMain;
+		for (size_t i = 0; i < main.size(); i += blockSize) { //we might need to clear that every iteration
+			lastElementsMain.push_back(main[i + blockSize - 1]);
+		}
+		for (size_t i = 0; i < blockSize; i++) {
+			elementsToPush.push_back(pend[i + currentBlockStart]);
+		}
+	}
+}
+
 std::vector<int> PmMergeMe::generateJacobsthal(int n) {
 	if (n <= 1) {
 		return {};
@@ -90,21 +128,11 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 	printVector(remaining, blockSize);
 	std::cout << std::endl;
 	size_t pendBlocks = pend.size() / blockSize;
-	int previousJacobsthal = 1;
-	int pendCount = 0;
-	std::vector<int> insertOrder;
-	std::vector<int> jacbobsthalSequence = generateJacobsthal(pendBlocks);
-	if (jacbobsthalSequence.size() > 2) {
-		int currentJacobsthal = jacbobsthalSequence[2];
-		int startBlock = std::min(currentJacobsthal, static_cast<int>(pendBlocks));
-		int endBlock = previousJacobsthal + 1;
-
-		for (int i = startBlock; i >= endBlock && i > pendCount; --i) {
-			insertOrder.push_back((i - 1) * blockSize);
-		}
-		previousJacobsthal = currentJacobsthal;
-		pendCount = startBlock;
-	}
+	std::vector<int> insertOrder = calculateInsertOrder(blockSize, pendBlocks);
+	std::cout << "Insert orderrr: ";
+	printVector(insertOrder);
+	std::cout << std::endl;
+	performBinarySearch(main, pend, insertOrder, blockSize);
 	recursiveInsertion(partiallySortedVector, blockSize / 2);
 }
 

@@ -10,10 +10,12 @@
 
 class PmMergeMe {
 	private:
+		int _oddElement = -1;
 		std::vector<int> _vector;
 		void recursiveSort(std::vector<int>& initialVector, size_t blockSize, int level = 1);
 		void recursiveInsertion(std::vector<int>& partiallySortedVector, size_t blockSize);
-		int _oddElement = -1;
+		std::vector<int> calculateInsertOrder(size_t blockSize, size_t blockNumber);
+		void performBinarySearch(std::vector<int>& main, std::vector<int>& pend, std::vector<int>& insertOrder, size_t blockSize);
 	public:
 		PmMergeMe();
 		PmMergeMe(const std::vector<int>& sequence);
