@@ -73,10 +73,10 @@ void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pe
                     printVector(main);
                     std::cout << std::endl;
 				}
-				previousJacobsthal = currentJacobsthal;
-				jcIndex++;
 			}
 		}
+				previousJacobsthal = currentJacobsthal;
+				jcIndex++;
 	}
 }
 
