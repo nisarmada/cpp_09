@@ -16,66 +16,89 @@ PmMergeMe& PmMergeMe::operator=(const PmMergeMe& other) {
 	return (*this);
 }
 
-std::vector<int> PmMergeMe::calculateInsertOrder(size_t blockSize, size_t pendBlocks) {
-	int previousJacobsthal = 1;
-	int pendCount = 0;
-	std::vector<int> jacbobsthalSequence = generateJacobsthal(pendBlocks);
-	std::vector<int> insertOrder;
-	// std::cout << "Jacobsthal--> " ;
-	// printVector(jacbobsthalSequence);
-	std::cout << std::endl;
-	if (jacbobsthalSequence.size() > 2) {
-		int currentJacobsthal = jacbobsthalSequence[3];
-		int startBlock = std::min(currentJacobsthal, static_cast<int>(pendBlocks));
-		int endBlock = previousJacobsthal + 1;
-		for (int i = startBlock; i >= endBlock && i > pendCount; --i) {
-			insertOrder.push_back((i - 1) * blockSize);
-		}
-		previousJacobsthal = currentJacobsthal;
-		pendCount = startBlock;
-	}
-	return insertOrder;
-}
+// std::vector<int> PmMergeMe::calculateInsertOrder(size_t blockSize, size_t pendBlocks) {
+// 	int previousJacobsthal = 1;
+// 	int pendCount = 0;
+// 	std::vector<int> jacbobsthalSequence = generateJacobsthal(pendBlocks);
+// 	std::vector<int> insertOrder;
+// 	// std::cout << "Jacobsthal--> " ;
+// 	printVector(jacbobsthalSequence);
+// 	std::cout << std::endl;
+// 	if (jacbobsthalSequence.size() > 2) {
+// 		int currentJacobsthal = jacbobsthalSequence[3];
+// 		int startBlock = std::min(currentJacobsthal, static_cast<int>(pendBlocks));
+// 		int endBlock = previousJacobsthal + 1;
+// 		for (int i = startBlock; i >= endBlock && i > pendCount; --i) {
+// 			insertOrder.push_back((i - 1) * blockSize);
+// 		}
+// 		previousJacobsthal = currentJacobsthal;
+// 		pendCount = startBlock;
+// 	}
+// 	return insertOrder;
+// }
 
-void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pend, std::vector<int>& insertOrder, size_t blockSize) {
+void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pend, size_t blockSize) {
 	if (pend.empty())
 		return ;
-	std::vector<int> elementsToPush;
-	for (int currentBlockStart : insertOrder) {
-		int lastElement = pend[currentBlockStart + blockSize - 1];
-		std::vector<int> lastElementsMain;
-		for (size_t i = 0; i < main.size(); i += blockSize) { //we might need to clear that every iteration
-			lastElementsMain.push_back(main[i + blockSize - 1]);
+	size_t amountBlocks = pend.size() / blockSize;
+	std::vector<int> jacobsthalnumbers = generateJacobsthal(amountBlocks);
+	size_t jcIndex = 3; //J[2]
+	size_t previousJacobsthal = 1; // J[1]
+	std::vector<int> currentBlock;
+	size_t insertedBlocks = 0;
+	std::vector<bool> blockIsInserted(amountBlocks, false);
+	while (insertedBlocks < amountBlocks) {
+		size_t currentJacobsthal = static_cast<size_t>(jacobsthalnumbers[jcIndex]);
+		for (size_t k = currentJacobsthal; k > previousJacobsthal; --k) {
+			size_t blockIndex = k - 2;
+			if (k >= 2 && blockIndex < amountBlocks && !blockIsInserted[blockIndex]) {
+				size_t pendIndex = blockIndex * blockSize;
+				if (pendIndex < pend.size()) {
+					int lastElementPend = pend[pendIndex + blockSize - 1];
+					std::vector<int> lastElementsMain;
+					for (size_t i = 0; i + blockSize <= main.size(); i += blockSize) {
+						lastElementsMain.push_back(main[i] + blockSize - 1);
+					}
+					auto lastElementsPosition = std::upper_bound(lastElementsMain.begin(), lastElementsMain.end(), lastElementPend);
+					int lastElementIndex = std::distance(lastElementsMain.begin(), lastElementsPosition);
+					int insertIndex = blockSize * lastElementIndex;
+					currentBlock.clear(); //check if we need
+					for (size_t i = 0; i < blockSize; i++) {
+						currentBlock.push_back(pend[i + pendIndex]);
+					}
+					main.insert(main.begin() + insertIndex, currentBlock.begin(), currentBlock.end());
+					blockIsInserted[blockIndex] = true;
+					insertedBlocks++;
+					std::cout << "binary search main :-> ";
+                    printVector(main);
+                    std::cout << std::endl;
+				}
+				previousJacobsthal = currentJacobsthal;
+				jcIndex++;
+			}
 		}
-		for (size_t i = 0; i < blockSize; i++) {
-			elementsToPush.push_back(pend[i + currentBlockStart]);
-		}
-		auto lastElementsPosition = std::upper_bound(lastElementsMain.begin(), lastElementsMain.end(), lastElement);
-		int lastElementsIndex = std::distance(lastElementsMain.begin(), lastElementsPosition);
-		int insertIndex = lastElementsIndex * blockSize;
-		main.insert(main.begin() + insertIndex, elementsToPush.begin(), elementsToPush.end());
-		lastElementsMain.clear();
-		elementsToPush.clear();
-		std::cout << "binary search main :-> ";
-		printVector(main);
-		std::cout << std::endl;
 	}
 }
 
 std::vector<int> PmMergeMe::generateJacobsthal(int n) {
-	if (n <= 1) {
-		return {};
-	}
 	std::vector<int> jacobsthalNumbers;
-	if (n > 1) {
-		jacobsthalNumbers.push_back(0);
+
+	jacobsthalNumbers.push_back(0);
+	if (n >= 1) {
 		jacobsthalNumbers.push_back(1);
 	}
-	while (jacobsthalNumbers.back() <= n) {
-		int nextJacobsthal = jacobsthalNumbers[jacobsthalNumbers.size() - 1] + 2 * jacobsthalNumbers[jacobsthalNumbers.size() - 2];
+	else {
+		return jacobsthalNumbers;
+	}
+	while (jacobsthalNumbers.size() >= 2) {
+		long long nextJacobsthalLL = (long long) jacobsthalNumbers[jacobsthalNumbers.size() - 1] + \
+			2LL * jacobsthalNumbers[jacobsthalNumbers.size() - 2];
+		int nextJacobsthal =static_cast<int>(nextJacobsthalLL);
+		if (nextJacobsthal > n) {
+			break;
+		}
 		jacobsthalNumbers.push_back(nextJacobsthal);
 	}
-	//check if we generate extra numbers that exceed n, we might need to delete the last one
 	return jacobsthalNumbers;
 }
 
@@ -135,12 +158,12 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 	std::cout << "remaining: ";
 	printVector(remaining, blockSize);
 	std::cout << std::endl;
-	size_t pendBlocks = pend.size() / blockSize;
-	std::vector<int> insertOrder = calculateInsertOrder(blockSize, pendBlocks);
-	std::cout << "Insert orderrr: ";
-	printVector(insertOrder);
+	// size_t pendBlocks = pend.size() / blockSize;
+	// std::vector<int> insertOrder = calculateInsertOrder(blockSize, pendBlocks);
+	// std::cout << "Insert orderrr: ";
+	// printVector(insertOrder);
 	std::cout << std::endl;
-	performBinarySearch(main, pend, insertOrder, blockSize);
+	performBinarySearch(main, pend, blockSize);
 	for (size_t i = 0; i < remaining.size(); i++) {
 		main.push_back(remaining[i]);
 	}
