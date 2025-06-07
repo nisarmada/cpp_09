@@ -57,7 +57,7 @@ void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pe
 					int lastElementPend = pend[pendIndex + blockSize - 1];
 					std::vector<int> lastElementsMain;
 					for (size_t i = 0; i + blockSize <= main.size(); i += blockSize) {
-						lastElementsMain.push_back(main[i] + blockSize - 1);
+						lastElementsMain.push_back(main[i + blockSize - 1]);
 					}
 					auto lastElementsPosition = std::upper_bound(lastElementsMain.begin(), lastElementsMain.end(), lastElementPend);
 					int lastElementIndex = std::distance(lastElementsMain.begin(), lastElementsPosition);
@@ -69,15 +69,27 @@ void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pe
 					main.insert(main.begin() + insertIndex, currentBlock.begin(), currentBlock.end());
 					blockIsInserted[blockIndex] = true;
 					insertedBlocks++;
-					std::cout << "binary search main :-> ";
-                    printVector(main);
-                    std::cout << std::endl;
+					// std::cout << "binary search main :-> ";
+                    // printVector(main);
+                    // std::cout << std::endl;
 				}
 			}
 		}
 				previousJacobsthal = currentJacobsthal;
 				jcIndex++;
 	}
+}
+
+void PmMergeMe::addOddElement(std::vector<int>& main) {
+	auto oddElementPosition = std::lower_bound(main.begin(), main.end(), _oddElement);
+	if (oddElementPosition == main.end()) {
+		main.push_back(_oddElement);
+	}
+	else {
+		int oddElementPositionIndex = std::distance(main.begin(), oddElementPosition);
+		main.insert(main.begin() + oddElementPositionIndex, _oddElement);
+	}
+	// std::cout << "odd element position " << *lastElement << std::endl;
 }
 
 std::vector<int> PmMergeMe::generateJacobsthal(int n) {
@@ -103,14 +115,14 @@ std::vector<int> PmMergeMe::generateJacobsthal(int n) {
 }
 
 void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size_t blockSize) {
-	if (blockSize == 1)
+	if (blockSize == 0)
 		return ;
 	std::vector<int> main;
 	std::vector<int> pend;
 	std::vector<int> remaining;
 	bool isMain = true;
 	size_t i;
-	std::cout << "block size is " << blockSize << std::endl;
+	// std::cout << "block size is " << blockSize << std::endl;
 	for (i = 0; i < 2 * blockSize; i++) { //a1
 		main.push_back(partiallySortedVector[i]);
 		// std::cout << "a1: " << partiallySortedVector[i] << std::endl;
@@ -145,28 +157,33 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 		// std::cout << "PPPPPPPPi: " << i << "size: " << partiallySortedVector.size() << std::endl;
 
 	}
-	std::cout << "main: ";
-	printVector(main, blockSize);
-	std::cout << std::endl;
-	std::cout << "pend: ";
-	printVector(pend, blockSize);
-	std::cout << std::endl;
+	// std::cout << "main: ";
+	// printVector(main, blockSize);
+	// std::cout << std::endl;
+	// std::cout << "pend: ";
+	// printVector(pend, blockSize);
+	// std::cout << std::endl;
 	while (i < partiallySortedVector.size()) {
 		remaining.push_back(partiallySortedVector[i]);
 		i++;
 	}
-	std::cout << "remaining: ";
-	printVector(remaining, blockSize);
-	std::cout << std::endl;
+	// std::cout << "remaining: ";
+	// printVector(remaining, blockSize);
+	// std::cout << std::endl;
 	// size_t pendBlocks = pend.size() / blockSize;
 	// std::vector<int> insertOrder = calculateInsertOrder(blockSize, pendBlocks);
 	// std::cout << "Insert orderrr: ";
 	// printVector(insertOrder);
-	std::cout << std::endl;
+	// std::cout << std::endl;
 	performBinarySearch(main, pend, blockSize);
 	for (size_t i = 0; i < remaining.size(); i++) {
 		main.push_back(remaining[i]);
 	}
+	partiallySortedVector.clear();
+	partiallySortedVector = main;
+	// std::cout << "End of recursion with blocksize " << blockSize << ", the main is-> ";
+	// printVector(partiallySortedVector);
+	// std::cout << std::endl;
 	recursiveInsertion(partiallySortedVector, blockSize / 2);
 }
 
@@ -192,7 +209,7 @@ void PmMergeMe::recursiveSort(std::vector<int>& data, size_t blockSize, int leve
 		
 	}
 	// std::cout << "AFTER LEVEL " << level << std::endl; 
-	printVector(data, blockSize);
+	// printVector(data, blockSize);
 	recursiveSort(data, 2 * blockSize, level + 1);
 }
 
@@ -204,8 +221,12 @@ void PmMergeMe::sortAndDisplayResults() {
 		tempVector.pop_back();
 	}
 	recursiveSort(tempVector, 1);
+	if (_oddElement != -1) {
+		addOddElement(tempVector);
+	}
+
 	// std::cout << "YPPPP" << std::endl;
-	// printVector(tempVector);
+	printVector(tempVector);
 }
 
 void runPmMerge(char* av[]) {

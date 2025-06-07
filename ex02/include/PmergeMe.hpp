@@ -16,6 +16,7 @@ class PmMergeMe {
 		void recursiveInsertion(std::vector<int>& partiallySortedVector, size_t blockSize);
 		// std::vector<int> calculateInsertOrder(size_t blockSize, size_t blockNumber);
 		void performBinarySearch(std::vector<int>& main, std::vector<int>& pend, size_t blockSize);
+		void addOddElement(std::vector<int>& main);
 	public:
 		PmMergeMe();
 		PmMergeMe(const std::vector<int>& sequence);
