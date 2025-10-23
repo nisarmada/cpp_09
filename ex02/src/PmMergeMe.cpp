@@ -143,6 +143,7 @@ void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size
 		main.push_back(partiallySortedVector[i]);
 		// std::cout << "a1: " << partiallySortedVector[i] << std::endl;
 	}
+	// maybe here we should check if we can fit to add numbers into the pend before going into the next loop in the case that we can't fit a full blockSize
 	if (i + blockSize <= partiallySortedVector.size()) {
 		for (size_t j = 0; j < blockSize; j++) {
 			pend.push_back(partiallySortedVector[i++]);
