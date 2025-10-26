@@ -37,63 +37,6 @@ PmMergeMe& PmMergeMe::operator=(const PmMergeMe& other) {
 // 	return insertOrder;
 // }
 
-void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pend, size_t blockSize) {
-	if (pend.empty())
-		return ;
-	size_t amountBlocks = pend.size() / blockSize;
-	std::vector<int> jacobsthalnumbers = generateJacobsthal(amountBlocks);
-	size_t jcIndex = 3; //J[2]
-	size_t previousJacobsthal = 1; // J[1]
-	std::vector<int> currentBlock;
-	size_t insertedBlocks = 0;
-	std::vector<bool> blockIsInserted(amountBlocks, false);
-
-	// std::cout << "    [Insertion Phase] Total Blocks to insert: " << amountBlocks << std::endl;
-
-	while (insertedBlocks < amountBlocks) {
-		if (jcIndex >= jacobsthalnumbers.size()){
-			//I don't get this check
-			// std::cout << "break" << std::endl;
-			break;
-		}
-		size_t currentJacobsthal = static_cast<size_t>(jacobsthalnumbers[jcIndex]);
-		for (size_t k = currentJacobsthal; k > previousJacobsthal; --k) {
-			size_t blockIndex = k - 2;
-			if (k >= 2 && blockIndex < amountBlocks && !blockIsInserted[blockIndex]) {
-				size_t pendIndex = blockIndex * blockSize;
-				if (pendIndex < pend.size()) {
-					int lastElementPend = pend[pendIndex + blockSize - 1];
-					std::vector<int> lastElementsMain;
-					for (size_t i = 0; i + blockSize <= main.size(); i += blockSize) {
-						lastElementsMain.push_back(main[i + blockSize - 1]);
-					}
-					auto lastElementsPosition = std::upper_bound(lastElementsMain.begin(), lastElementsMain.end(), lastElementPend);
-					int lastElementIndex = std::distance(lastElementsMain.begin(), lastElementsPosition);
-					int insertIndex = blockSize * lastElementIndex;
-					currentBlock.clear(); //check if we need
-					for (size_t i = 0; i < blockSize; i++) {
-						currentBlock.push_back(pend[i + pendIndex]);
-					}
-					// std::cout << "        Inserting Block #" << blockIndex + 1 << " (size " << blockSize << ") at index " << insertIndex; // ADD THIS
-                    // std::cout << " (" << insertedBlocks + 1 << "/" << amountBlocks << " blocks complete)..." << std::endl; // ADD THIS
-					main.insert(main.begin() + insertIndex, currentBlock.begin(), currentBlock.end());
-
-					// std::cout << "        Insertion of Block #" << blockIndex + 1 << " COMPLETE. Vector size: " << main.size() << std::endl;
-
-					blockIsInserted[blockIndex] = true;
-					insertedBlocks++;
-					// std::cout << "binary search main :-> ";
-                    // printVector(main);
-                    // std::cout << std::endl;
-				}
-				// std::cout << "hellooooo\n";
-			}
-			// std::cout << "helloo1\n";
-		}
-				previousJacobsthal = currentJacobsthal;
-				jcIndex++;
-	}
-}
 
 void PmMergeMe::addOddElement(std::vector<int>& main) {
 	auto oddElementPosition = std::lower_bound(main.begin(), main.end(), _oddElement);
@@ -129,108 +72,68 @@ std::vector<int> PmMergeMe::generateJacobsthal(int n) {
 	return jacobsthalNumbers;
 }
 
-void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size_t blockSize) {
-	if (blockSize == 0)
-		return ;
-	// std::cout << "[Recursive Insertion] Processing Blocks of Size: " << blockSize << std::endl;
-	std::vector<int> main;
-	std::vector<int> pend;
-	std::vector<int> remaining;
-	bool isMain = true;
-	size_t i;
-	// std::cout << "block size is " << blockSize << std::endl;
-	for (i = 0; i < 2 * blockSize; i++) { //a1
-		main.push_back(partiallySortedVector[i]);
-		// std::cout << "a1: " << partiallySortedVector[i] << std::endl;
-	}
-	// maybe here we should check if we can fit to add numbers into the pend before going into the next loop in the case that we can't fit a full blockSize
-	if (i + blockSize <= partiallySortedVector.size()) {
-		for (size_t j = 0; j < blockSize; j++) {
-			pend.push_back(partiallySortedVector[i++]);
-		}
-	}
-	while (i < partiallySortedVector.size()) {
-		// size_t steps = 0;
-		if (i + blockSize <= partiallySortedVector.size()) {
-			if (isMain) {
-				for (size_t j = 0; j < blockSize; j++) {
-					main.push_back(partiallySortedVector[i]);
-					i++;
-					// steps++;
-				}
-			}
-			else{
-				for (size_t j = 0; j < blockSize; j++) {
-					pend.push_back(partiallySortedVector[i]);
-					i++;
-					// steps++;
-				}
-			}
-		}
-		else {
-			break;
-		}
-		isMain = !isMain;
-		// std::cout << "PPPPPPPPi: " << i << "size: " << partiallySortedVector.size() << std::endl;
 
+std::vector<element> PmMergeMe::assignNumberPairs(std::vector<int>& vector){
+	std::vector<element> pairedVector;
+	for (size_t i = 0; i < vector.size(); i++){
+		element currentNumber;
+		currentNumber.number = vector[i];
+		currentNumber.originalIndex = i;
+		if (i % 2 == 0){
+			currentNumber.partner = vector[i + 1];
+		}
+		else{
+			currentNumber.partner = vector[i - 1];
+		}
+		pairedVector.push_back(currentNumber);
 	}
-	// std::cout << "main: ";
-	// printVector(main, blockSize);
-	// std::cout << std::endl;
-	// std::cout << "pend: ";
-	// printVector(pend, blockSize);
-	// std::cout << std::endl;
-	while (i < partiallySortedVector.size()) {
-		remaining.push_back(partiallySortedVector[i]);
-		i++;
+	printElementVector(pairedVector);
+	return pairedVector;
+}
+
+void PmMergeMe::insertElements(std::vector<element>& main, std::vector<element>& pend){
+	//do we need to check if pend is empty?
+	main.insert(main.begin(), pend[0]);
+	pend.erase(pend.begin());
+	std::cout << "B size: " << pend.size() << std::endl;
+	std::vector<int> jacobsthalNumbers = generateJacobsthal(pend.size());
+	for (size_t i = 0; i < jacobsthalNumbers.size(); i++){
+		std::cout << "-> " << jacobsthalNumbers[i] << " ";
 	}
-	// std::cout << "remaining: ";
-	// printVector(remaining, blockSize);
-	// std::cout << std::endl;
-	// size_t pendBlocks = pend.size() / blockSize;
-	// std::vector<int> insertOrder = calculateInsertOrder(blockSize, pendBlocks);
-	// std::cout << "Insert orderrr: ";
-	// printVector(insertOrder);
-	// std::cout << std::endl;
-	performBinarySearch(main, pend, blockSize);
-	// std::cout << "[Recursive Insertion] Block Size " << blockSize << " Insertion COMPLETE. Recursing..." << std::endl;
-	for (size_t i = 0; i < remaining.size(); i++) {
-		main.push_back(remaining[i]);
+	std::cout << std::endl;
+}
+
+std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pairedVector){
+	if (pairedVector.size() == 1){
+		return pairedVector;
 	}
-	partiallySortedVector.clear();
-	partiallySortedVector = main;
-	// std::cout << "End of recursion with blocksize " << blockSize << ", the main is-> ";
-	// printVector(partiallySortedVector);
-	// std::cout << std::endl;
-	recursiveInsertion(partiallySortedVector, blockSize / 2);
+	std::vector<element> main;
+	std::vector<element> pend;
+	for (size_t i = 0; i < pairedVector.size(); i += 2){
+		// std::cout << "elements " << pairedVector[i].number << " -- " << pairedVector[i + 1].number << std::endl;
+		if (pairedVector[i].number > pairedVector[i + 1].number){
+			main.push_back(pairedVector[i]);
+			pend.push_back(pairedVector[i + 1]);
+		} else {
+			main.push_back(pairedVector[i + 1]);
+			pend.push_back(pairedVector[i]);
+		}
+	}
+	std::cout << "main: ";
+	printElementVector(main);
+	// printElementVector(pend);
+	main = recursivelySortElements(main);
+	insertElements(main, pend);
+
+	return main;
 }
 
 
-void PmMergeMe::recursiveSort(std::vector<int>& data, size_t blockSize, int level){
-	if (blockSize * 2 > data.size()) {
-		// std::cout << "level-> " << level << std::endl;
-		// std::cout << "--- Phase 1 Complete --- Starting Insertion Phase (Block Size: " << blockSize / 2 << ")" << std::endl;
-		recursiveInsertion(data, blockSize / 2);
-		return ;
-	} // here we can add the insertion recursively
-	// std::cout << "BEFORE LEVEL " << level << std::endl; 
-	// std::cout << "[Recursive Sort] Processing Level " << level << " (Block Size: " << blockSize << ")" << std::endl;
-	for (size_t i = 0; i + (2 *blockSize) <= data.size(); i += 2 * blockSize) {
-		size_t block1end = i + blockSize - 1;
-		size_t block2end = std::min(i + 2 * blockSize - 1, data.size() - 1);
-		// printVector(data, blockSize);
-		if (level == 1 && data[block1end] > data[block2end]) {
-				std::swap(data[block1end], data[block2end]);
-		}
-		else if (data[block1end] > data[block2end]) {
-			// std::cout << "COMPARING " << data[block1end] << " WITH " << data[block2end] << std::endl;
-			std::rotate(data.begin() + i, data.begin() + i + blockSize, data.begin() + block2end + 1);
-		}
-		
-	}
-	// std::cout << "AFTER LEVEL " << level << std::endl; 
-	// printVector(data, blockSize);
-	recursiveSort(data, 2 * blockSize, level + 1);
+void PmMergeMe::performMergeInsertion(std::vector<int>& vector){
+	//creates a struct that holds numbers with their pairs
+	std::vector<element> pairedVector = assignNumberPairs(vector);
+	recursivelySortElements(pairedVector);
+
 }
 
 void PmMergeMe::sortAndDisplayResults() {
@@ -240,13 +143,20 @@ void PmMergeMe::sortAndDisplayResults() {
 		_oddElement = tempVector.back();
 		tempVector.pop_back();
 	}
-	recursiveSort(tempVector, 1);
+	performMergeInsertion(tempVector);
 	if (_oddElement != -1) {
 		addOddElement(tempVector);
 	}
 
 	// std::cout << "YPPPP" << std::endl;
-	printVector (tempVector);
+	// printVector (tempVector);
+}
+
+void printElementVector(std::vector<element>& vector){
+	for (size_t i = 0; i < vector.size(); i++){
+		std::cout << "| " << vector[i].number << " ";
+	}
+	std::cout << "\n";
 }
 
 void runPmMerge(char* av[]) {
@@ -261,3 +171,164 @@ void runPmMerge(char* av[]) {
 	}
 }
 
+// void PmMergeMe::performBinarySearch(std::vector<int>& main, std::vector<int>& pend, size_t blockSize) {
+// 	if (pend.empty())
+// 		return ;
+// 	size_t amountBlocks = pend.size() / blockSize;
+// 	std::vector<int> jacobsthalnumbers = generateJacobsthal(amountBlocks);
+// 	size_t jcIndex = 3; //J[2]
+// 	size_t previousJacobsthal = 1; // J[1]
+// 	std::vector<int> currentBlock;
+// 	size_t insertedBlocks = 0;
+// 	std::vector<bool> blockIsInserted(amountBlocks, false);
+
+// 	// std::cout << "    [Insertion Phase] Total Blocks to insert: " << amountBlocks << std::endl;
+
+// 	while (insertedBlocks < amountBlocks) {
+// 		if (jcIndex >= jacobsthalnumbers.size()){
+// 			//I don't get this check
+// 			// std::cout << "break" << std::endl;
+// 			break;
+// 		}
+// 		size_t currentJacobsthal = static_cast<size_t>(jacobsthalnumbers[jcIndex]);
+// 		for (size_t k = currentJacobsthal; k > previousJacobsthal; --k) {
+// 			size_t blockIndex = k - 2;
+// 			if (k >= 2 && blockIndex < amountBlocks && !blockIsInserted[blockIndex]) {
+// 				size_t pendIndex = blockIndex * blockSize;
+// 				if (pendIndex < pend.size()) {
+// 					int lastElementPend = pend[pendIndex + blockSize - 1];
+// 					std::vector<int> lastElementsMain;
+// 					for (size_t i = 0; i + blockSize <= main.size(); i += blockSize) {
+// 						lastElementsMain.push_back(main[i + blockSize - 1]);
+// 					}
+// 					auto lastElementsPosition = std::upper_bound(lastElementsMain.begin(), lastElementsMain.end(), lastElementPend);
+// 					int lastElementIndex = std::distance(lastElementsMain.begin(), lastElementsPosition);
+// 					int insertIndex = blockSize * lastElementIndex;
+// 					currentBlock.clear(); //check if we need
+// 					for (size_t i = 0; i < blockSize; i++) {
+// 						currentBlock.push_back(pend[i + pendIndex]);
+// 					}
+// 					// std::cout << "        Inserting Block #" << blockIndex + 1 << " (size " << blockSize << ") at index " << insertIndex; // ADD THIS
+//                     // std::cout << " (" << insertedBlocks + 1 << "/" << amountBlocks << " blocks complete)..." << std::endl; // ADD THIS
+// 					main.insert(main.begin() + insertIndex, currentBlock.begin(), currentBlock.end());
+
+// 					// std::cout << "        Insertion of Block #" << blockIndex + 1 << " COMPLETE. Vector size: " << main.size() << std::endl;
+
+// 					blockIsInserted[blockIndex] = true;
+// 					insertedBlocks++;
+// 					// std::cout << "binary search main :-> ";
+//                     // printVector(main);
+//                     // std::cout << std::endl;
+// 				}
+// 				// std::cout << "hellooooo\n";
+// 			}
+// 			// std::cout << "helloo1\n";
+// 		}
+// 				previousJacobsthal = currentJacobsthal;
+// 				jcIndex++;
+// 	}
+// }
+
+// void PmMergeMe::recursiveInsertion(std::vector<int>& partiallySortedVector, size_t blockSize) {
+// 	if (blockSize == 0)
+// 		return ;
+// 	// std::cout << "[Recursive Insertion] Processing Blocks of Size: " << blockSize << std::endl;
+// 	std::vector<int> main;
+// 	std::vector<int> pend;
+// 	std::vector<int> remaining;
+// 	bool isMain = true;
+// 	size_t i;
+// 	// std::cout << "block size is " << blockSize << std::endl;
+// 	for (i = 0; i < 2 * blockSize; i++) { //a1
+// 		main.push_back(partiallySortedVector[i]);
+// 		// std::cout << "a1: " << partiallySortedVector[i] << std::endl;
+// 	}
+// 	// maybe here we should check if we can fit to add numbers into the pend before going into the next loop in the case that we can't fit a full blockSize
+// 	if (i + blockSize <= partiallySortedVector.size()) {
+// 		for (size_t j = 0; j < blockSize; j++) {
+// 			pend.push_back(partiallySortedVector[i++]);
+// 		}
+// 	}
+// 	while (i < partiallySortedVector.size()) {
+// 		// size_t steps = 0;
+// 		if (i + blockSize <= partiallySortedVector.size()) {
+// 			if (isMain) {
+// 				for (size_t j = 0; j < blockSize; j++) {
+// 					main.push_back(partiallySortedVector[i]);
+// 					i++;
+// 					// steps++;
+// 				}
+// 			}
+// 			else{
+// 				for (size_t j = 0; j < blockSize; j++) {
+// 					pend.push_back(partiallySortedVector[i]);
+// 					i++;
+// 					// steps++;
+// 				}
+// 			}
+// 		}
+// 		else {
+// 			break;
+// 		}
+// 		isMain = !isMain;
+// 		// std::cout << "PPPPPPPPi: " << i << "size: " << partiallySortedVector.size() << std::endl;
+
+// 	}
+// 	// std::cout << "main: ";
+// 	// printVector(main, blockSize);
+// 	// std::cout << std::endl;
+// 	// std::cout << "pend: ";
+// 	// printVector(pend, blockSize);
+// 	// std::cout << std::endl;
+// 	while (i < partiallySortedVector.size()) {
+// 		remaining.push_back(partiallySortedVector[i]);
+// 		i++;
+// 	}
+// 	// std::cout << "remaining: ";
+// 	// printVector(remaining, blockSize);
+// 	// std::cout << std::endl;
+// 	// size_t pendBlocks = pend.size() / blockSize;
+// 	// std::vector<int> insertOrder = calculateInsertOrder(blockSize, pendBlocks);
+// 	// std::cout << "Insert orderrr: ";
+// 	// printVector(insertOrder);
+// 	// std::cout << std::endl;
+// 	performBinarySearch(main, pend, blockSize);
+// 	// std::cout << "[Recursive Insertion] Block Size " << blockSize << " Insertion COMPLETE. Recursing..." << std::endl;
+// 	for (size_t i = 0; i < remaining.size(); i++) {
+// 		main.push_back(remaining[i]);
+// 	}
+// 	partiallySortedVector.clear();
+// 	partiallySortedVector = main;
+// 	// std::cout << "End of recursion with blocksize " << blockSize << ", the main is-> ";
+// 	// printVector(partiallySortedVector);
+// 	// std::cout << std::endl;
+// 	recursiveInsertion(partiallySortedVector, blockSize / 2);
+// }
+
+
+// void PmMergeMe::recursiveSort(std::vector<int>& data, size_t blockSize, int level){
+// 	if (blockSize * 2 > data.size()) {
+// 		// std::cout << "level-> " << level << std::endl;
+// 		// std::cout << "--- Phase 1 Complete --- Starting Insertion Phase (Block Size: " << blockSize / 2 << ")" << std::endl;
+// 		recursiveInsertion(data, blockSize / 2);
+// 		return ;
+// 	} // here we can add the insertion recursively
+// 	// std::cout << "BEFORE LEVEL " << level << std::endl; 
+// 	// std::cout << "[Recursive Sort] Processing Level " << level << " (Block Size: " << blockSize << ")" << std::endl;
+// 	for (size_t i = 0; i + (2 *blockSize) <= data.size(); i += 2 * blockSize) {
+// 		size_t block1end = i + blockSize - 1;
+// 		size_t block2end = std::min(i + 2 * blockSize - 1, data.size() - 1);
+// 		if (level == 1 && data[block1end] > data[block2end]) {
+// 				std::swap(data[block1end], data[block2end]);
+// 		}
+// 		else if (data[block1end] > data[block2end]) {
+// 			// std::cout << "COMPARING " << data[block1end] << " WITH " << data[block2end] << std::endl;
+// 			std::rotate(data.begin() + i, data.begin() + i + blockSize, data.begin() + block2end + 1);
+// 		}
+		
+// 	}
+// 	printVector(data, blockSize);
+// 	// std::cout << "AFTER LEVEL " << level << std::endl; 
+// 	// printVector(data, blockSize);
+// 	recursiveSort(data, 2 * blockSize, level + 1);
+// }
