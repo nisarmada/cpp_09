@@ -98,20 +98,23 @@ void PmMergeMe::insertElements(std::vector<element>& main, std::vector<element>&
 	size_t pendSize = pend.size();
 	std::vector<int> jacobsthalNumbers = generateJacobsthal(pendSize + 1);
 	int previousJacobsthal = jacobsthalNumbers[2];
-	std::cout << "pend size is  ---> " << pendSize << std::endl;
 	for (size_t k = 3; k < jacobsthalNumbers.size(); k++){
 		int currentJacobsthal = jacobsthalNumbers[k];
 		int startIndex = previousJacobsthal + 1;
 		int endIndex = std::min(currentJacobsthal, (int)pendSize);
-		std::cout << "yoore2 " << std::endl;
+		// std::cout << "start index "<< startIndex << std::endl;
+		// std::cout << "end index" << endIndex << std::endl;
 		for (int i = endIndex; i >= startIndex; --i){
 			int pendVectorIndex = i - 2;
 
-			if (i >= (int)pendSize || i <= 0)
+			printElementVector(pend);
+			if (pendVectorIndex >= (int)pendSize || pendVectorIndex < 0){
+				// std::cout << "inside continue pend size" << pendSize << std::endl;
 				continue;
+			}
 			
 			element elementToInsert = pend[pendVectorIndex];
-			std::cout << "element to be inserted " << elementToInsert.number << "-- ";
+			// std::cout << "element to be inserted " << elementToInsert.number << "-- ";
 		}
 	}
 	
