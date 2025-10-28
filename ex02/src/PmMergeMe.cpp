@@ -95,11 +95,27 @@ void PmMergeMe::insertElements(std::vector<element>& main, std::vector<element>&
 	//do we need to check if pend is empty?
 	main.insert(main.begin(), pend[0]);
 	pend.erase(pend.begin());
-	std::cout << "B size: " << pend.size() << std::endl;
-	std::vector<int> jacobsthalNumbers = generateJacobsthal(pend.size());
-	for (size_t i = 0; i < jacobsthalNumbers.size(); i++){
-		std::cout << "-> " << jacobsthalNumbers[i] << " ";
+	size_t pendSize = pend.size();
+	std::vector<int> jacobsthalNumbers = generateJacobsthal(pendSize + 1);
+	int previousJacobsthal = jacobsthalNumbers[2];
+	std::cout << "pend size is  ---> " << pendSize << std::endl;
+	for (size_t k = 3; k < jacobsthalNumbers.size(); k++){
+		int currentJacobsthal = jacobsthalNumbers[k];
+		int startIndex = previousJacobsthal + 1;
+		int endIndex = std::min(currentJacobsthal, (int)pendSize);
+		std::cout << "yoore2 " << std::endl;
+		for (int i = endIndex; i >= startIndex; --i){
+			int pendVectorIndex = i - 2;
+
+			if (i >= (int)pendSize || i <= 0)
+				continue;
+			
+			element elementToInsert = pend[pendVectorIndex];
+			std::cout << "element to be inserted " << elementToInsert.number << "-- ";
+		}
 	}
+	
+
 	std::cout << std::endl;
 }
 
@@ -109,8 +125,12 @@ std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pa
 	}
 	std::vector<element> main;
 	std::vector<element> pend;
+	//I think I am losing one element in the end here
 	for (size_t i = 0; i < pairedVector.size(); i += 2){
-		// std::cout << "elements " << pairedVector[i].number << " -- " << pairedVector[i + 1].number << std::endl;
+		if ((i + 1) > pairedVector.size() - 1){
+			break; 
+		}
+		std::cout << "elements " << pairedVector[i].number << " -- " << pairedVector[i + 1].number << std::endl;
 		if (pairedVector[i].number > pairedVector[i + 1].number){
 			main.push_back(pairedVector[i]);
 			pend.push_back(pairedVector[i + 1]);
@@ -119,10 +139,16 @@ std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pa
 			pend.push_back(pairedVector[i]);
 		}
 	}
-	std::cout << "main: ";
-	printElementVector(main);
-	// printElementVector(pend);
+	std::cout << "size is ---> " << pairedVector.size() << std::endl;
+	if (pairedVector.size() % 2 != 0){
+		std::cout << "this is the number -> " << pairedVector[pairedVector.size() - 1].number << std::endl;
+		pend.push_back(pairedVector[pairedVector.size() - 1]);
+	}
 	main = recursivelySortElements(main);
+	// std::cout << "main: ";
+	// printElementVector(main);
+	// printElementVector(pend);
+	std::cout << "yoooo " << std::endl;
 	insertElements(main, pend);
 
 	return main;
