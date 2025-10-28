@@ -114,12 +114,8 @@ void PmMergeMe::insertElements(std::vector<element>& main, std::vector<element>&
 			}
 			
 			element elementToInsert = pend[pendVectorIndex];
-			// std::cout << "element to be inserted " << elementToInsert.number << "-- ";
 		}
 	}
-	
-
-	std::cout << std::endl;
 }
 
 std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pairedVector){
@@ -161,8 +157,8 @@ std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pa
 void PmMergeMe::performMergeInsertion(std::vector<int>& vector){
 	//creates a struct that holds numbers with their pairs
 	std::vector<element> pairedVector = assignNumberPairs(vector);
-	recursivelySortElements(pairedVector);
-
+	pairedVector = recursivelySortElements(pairedVector);
+	
 }
 
 void PmMergeMe::sortAndDisplayResults() {
