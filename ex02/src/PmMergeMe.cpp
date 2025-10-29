@@ -1,4 +1,5 @@
-#include "../include/PmergeMe.hpp"
+#include "../include/PmMergeMe.hpp"
+#include "../include/PmMergeMeD.hpp"
 
 
 PmMergeMe::PmMergeMe() {}
@@ -16,27 +17,6 @@ PmMergeMe& PmMergeMe::operator=(const PmMergeMe& other) {
 	return (*this);
 }
 
-// std::vector<int> PmMergeMe::calculateInsertOrder(size_t blockSize, size_t pendBlocks) {
-// 	int previousJacobsthal = 1;
-// 	int pendCount = 0;
-// 	std::vector<int> jacbobsthalSequence = generateJacobsthal(pendBlocks);
-// 	std::vector<int> insertOrder;
-// 	// std::cout << "Jacobsthal--> " ;
-// 	printVector(jacbobsthalSequence);
-// 	std::cout << std::endl;
-// 	if (jacbobsthalSequence.size() > 2) {
-// 		int currentJacobsthal = jacbobsthalSequence[3];
-// 		int startBlock = std::min(currentJacobsthal, static_cast<int>(pendBlocks));
-// 		int endBlock = previousJacobsthal + 1;
-// 		for (int i = startBlock; i >= endBlock && i > pendCount; --i) {
-// 			insertOrder.push_back((i - 1) * blockSize);
-// 		}
-// 		previousJacobsthal = currentJacobsthal;
-// 		pendCount = startBlock;
-// 	}
-// 	return insertOrder;
-// }
-
 
 void PmMergeMe::addOddElement(std::vector<int>& main) {
 	auto oddElementPosition = std::lower_bound(main.begin(), main.end(), _oddElement);
@@ -50,7 +30,7 @@ void PmMergeMe::addOddElement(std::vector<int>& main) {
 	// std::cout << "odd element position " << *lastElement << std::endl;
 }
 
-std::vector<int> PmMergeMe::generateJacobsthal(int n) {
+std::vector<int> generateJacobsthal(int n) {
 	std::vector<int> jacobsthalNumbers;
 
 	jacobsthalNumbers.push_back(0);
@@ -87,7 +67,6 @@ std::vector<element> PmMergeMe::assignNumberPairs(std::vector<int>& vector){
 		}
 		pairedVector.push_back(currentNumber);
 	}
-	printElementVector(pairedVector);
 	return pairedVector;
 }
 
@@ -104,9 +83,9 @@ void PmMergeMe::performBinarySearch(std::vector<element>& main, element& element
 	int low = 0;
 	int high = findPair(main, elementToInsert);
 
-	std::cout << "find pair returned "<< high << std ::endl;
+	// std::cout << "find pair returned "<< high << std ::endl;
 	if (high < 0){
-		std::cout << "Error in find PairRRR for element " << elementToInsert.number << "with partner "<< elementToInsert.partner << std::endl;
+		// std::cout << "Error in find PairRRR for element " << elementToInsert.number << "with partner "<< elementToInsert.partner << std::endl;
 		return ;
 	}
 	while (low <= high){
@@ -117,7 +96,6 @@ void PmMergeMe::performBinarySearch(std::vector<element>& main, element& element
 		else if (main[middle].number < elementToInsert.number){
 			low = middle + 1;
 		}
-		std::cout << "binary loop " << std::endl;
 	}
 	main.insert(main.begin() + low, elementToInsert);
 }
@@ -167,7 +145,7 @@ std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pa
 		if ((i + 1) > pairedVector.size() - 1){
 			break; 
 		}
-		std::cout << "elements " << pairedVector[i].number << " -- " << pairedVector[i + 1].number << std::endl;
+		// std::cout << "elements " << pairedVector[i].number << " -- " << pairedVector[i + 1].number << std::endl;
 		if (pairedVector[i].number > pairedVector[i + 1].number){
 			element mainElement = pairedVector[i];
 			element pendElement = pairedVector[i + 1];
@@ -184,16 +162,16 @@ std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pa
 			pend.push_back(pendElement);
 		}
 	}
-	std::cout << "size is ---> " << pairedVector.size() << std::endl;
+	// std::cout << "size is ---> " << pairedVector.size() << std::endl;
 	if (pairedVector.size() % 2 != 0){
-		std::cout << "this is the number -> " << pairedVector[pairedVector.size() - 1].number << std::endl;
+		// std::cout << "this is the number -> " << pairedVector[pairedVector.size() - 1].number << std::endl;
 		pend.push_back(pairedVector[pairedVector.size() - 1]);
 	}
 	main = recursivelySortElements(main);
 	// std::cout << "main: ";
 	// printElementVector(main);
 	// printElementVector(pend);
-	std::cout << "yoooo " << std::endl;
+	// std::cout << "yoooo " << std::endl;
 	insertElements(main, pend);
 
 	return main;
@@ -204,7 +182,10 @@ void PmMergeMe::performMergeInsertion(std::vector<int>& vector){
 	//creates a struct that holds numbers with their pairs
 	std::vector<element> pairedVector = assignNumberPairs(vector);
 	pairedVector = recursivelySortElements(pairedVector);
-	printElementVector(pairedVector);
+	vector.clear();
+	for (size_t i = 0; i < pairedVector.size(); i++){
+		vector.push_back(pairedVector[i].number);
+	}
 }
 
 void PmMergeMe::sortAndDisplayResults() {
@@ -220,7 +201,8 @@ void PmMergeMe::sortAndDisplayResults() {
 	}
 
 	// std::cout << "YPPPP" << std::endl;
-	// printVector (tempVector);
+	printVector (_vector, "Before");
+	printVector(tempVector, "After");
 }
 
 void printElementVector(std::vector<element>& vector){
@@ -230,12 +212,27 @@ void printElementVector(std::vector<element>& vector){
 	std::cout << "\n";
 }
 
+static void printDuration(double durationV, double durationD, size_t size){
+	std::cout << "Time to process a range of " << size << " elements with std::vector : " << durationV << " us" << std::endl;
+	std::cout << "Time to process a range of " << size << " elements with std::deque : " << durationD << " us" << std::endl;
+}
+
 void runPmMerge(char* av[]) {
 	try {
 		checkInput(av);
 		std::vector<int> unsortedVector = convertToVector(av);
 		PmMergeMe object(unsortedVector);
+		std::deque<int> unsortedDeque = convertToDeque(av);
+		PmMergeMeD objectDeque(unsortedDeque);
+		auto startTimeV = std::chrono::high_resolution_clock::now();
 		object.sortAndDisplayResults();
+		auto endTimeV = std::chrono::high_resolution_clock::now();
+		double durationV = std::chrono::duration_cast<std::chrono::microseconds>(endTimeV - startTimeV).count();
+		auto startTimeD = std::chrono::high_resolution_clock::now();
+		objectDeque.sortAndDisplayResults();
+		auto endTimeD = std::chrono::high_resolution_clock::now();
+		double durationD = std::chrono::duration_cast<std::chrono::microseconds>(endTimeD - startTimeD).count();
+		printDuration(durationV, durationD, unsortedVector.size());
 	}
 	catch(std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;

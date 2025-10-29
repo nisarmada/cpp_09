@@ -6,8 +6,9 @@
 #include <sstream>
 #include <exception>
 #include <vector>
+#include <chrono>
 
-typedef struct {
+typedef struct s_element{
 	int number;
 	int partner;
 	int originalIndex;
@@ -17,6 +18,7 @@ class PmMergeMe {
 	private:
 		int _oddElement = -1;
 		std::vector<int> _vector;
+
 		std::vector<element> assignNumberPairs(std::vector<int>& initialVector);
 		void recursiveInsertion(std::vector<int>& partiallySortedVector, size_t blockSize);
 		// std::vector<int> calculateInsertOrder(size_t blockSize, size_t blockNumber);
@@ -31,7 +33,6 @@ class PmMergeMe {
 		PmMergeMe& operator=(const PmMergeMe& other);
 
 		void sortAndDisplayResults();
-		std::vector<int> generateJacobsthal(int n);
 		void performMergeInsertion(std::vector<int>& vector);
 		std::vector<element> recursivelySortElements(std::vector<element>& pairedVector);
 		void insertElements(std::vector<element>& main, std::vector<element>& pend);
@@ -39,8 +40,9 @@ class PmMergeMe {
 		int findPair(std::vector<element>& main, element& elementToInsert);
 };
 
+std::vector<int> generateJacobsthal(int n);
 void runPmMerge(char* av[]);
-void printVector(std::vector<int>& vector, size_t blockSize = 0);
+void printVector(std::vector<int>& vector, std::string beforeOrAfter);
 void printElementVector(std::vector<element>& vector);
 void checkInput(char* av[]);
 std::vector<int> convertToVector(char* av[]);

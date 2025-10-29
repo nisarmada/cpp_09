@@ -1,4 +1,4 @@
-#include "../include/PmergeMe.hpp"
+#include "../include/PmMergeMe.hpp"
 
 void checkInput(char* av[]){
 	for (int i = 1; av[i]; i++) {
@@ -30,17 +30,10 @@ std::vector<int> convertToVector(char* av[]) {
 	return vector;
 }
 
-void printVector(std::vector<int>& vector, size_t blockSize) {
-	std::cout << "{";
-	for (unsigned int i = 0; i < vector.size(); i++) {
-		
-		if (blockSize > 0 && i > 0 && i % blockSize == 0) {
-			std::cout << "| ";
-		}
-		std::cout << vector[i];
-		if (i == vector.size() - 1)
-			break;
-		std::cout << ", ";
+void printVector(std::vector<int>& vector, std::string beforeOrAfter) {
+	std::cout << beforeOrAfter << ": ";
+	for (size_t i = 0; i < vector.size(); i++){
+		std::cout << vector[i] << " ";
 	}
-	std::cout << "}" << std::endl;
+	std::cout << std::endl;
 }

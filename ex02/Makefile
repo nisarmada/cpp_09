@@ -7,7 +7,7 @@ SRC_DIR  := src
 OBJ_DIR  := obj
 
 # Explicitly list your source files (add all .cpp files here)
-SRCS     := $(SRC_DIR)/main.cpp $(SRC_DIR)/PmMergeMe.cpp $(SRC_DIR)/checks.cpp
+SRCS     := $(SRC_DIR)/main.cpp $(SRC_DIR)/PmMergeMe.cpp $(SRC_DIR)/checks.cpp $(SRC_DIR)/PmMergeMeD.cpp
 
 # Generate object file paths (e.g., obj/Contact.o)
 OBJS     := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
