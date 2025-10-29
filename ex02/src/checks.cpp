@@ -7,7 +7,6 @@ void checkInput(char* av[]){
 		int currentInt;
 		if (!(s >> currentInt) || !s.eof())
 			throw std::invalid_argument("Input is not an integer " + currentArg);
-		// std::cout << "current int: " << currentInt << std::endl;
 	}
 }
 

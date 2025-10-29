@@ -43,7 +43,6 @@ void PmMergeMeD::addOddElement(std::deque<int>& main) {
 		int oddElementPositionIndex = std::distance(main.begin(), oddElementPosition);
 		main.insert(main.begin() + oddElementPositionIndex, _oddElement);
 	}
-	// std::cout << "odd element position " << *lastElement << std::endl;
 }
 
 std::deque<element> PmMergeMeD::assignNumberPairs(std::deque<int>& deque){
@@ -92,7 +91,6 @@ void PmMergeMeD::performBinarySearch(std::deque<element>& main, element& element
 }
 
 void PmMergeMeD::insertElements(std::deque<element>& main, std::deque<element>& pend){
-	//do we need to check if pend is empty?
 	main.insert(main.begin(), pend[0]);
 	pend.erase(pend.begin());
 	size_t pendSize = pend.size();
@@ -153,10 +151,8 @@ std::deque<element> PmMergeMeD::recursivelySortElements(std::deque<element>& pai
 	if (pairedDeque.size() % 2 != 0){
 		pend.push_back(pairedDeque[pairedDeque.size() - 1]);
 	}
+
 	main = recursivelySortElements(main);
-	// std::cout << "main: ";
-	// printElementVector(main);
-	// printElementVector(pend);
 	insertElements(main, pend);
 
 	return main;
@@ -183,9 +179,6 @@ void PmMergeMeD::sortAndDisplayResults() {
 	if (_oddElement != -1) {
 		addOddElement(tempDeque);
 	}
-
-	// std::cout << "YPPPP" << std::endl;
-	// printDeque(tempDeque);
 }
 
 

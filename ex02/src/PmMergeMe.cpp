@@ -27,7 +27,6 @@ void PmMergeMe::addOddElement(std::vector<int>& main) {
 		int oddElementPositionIndex = std::distance(main.begin(), oddElementPosition);
 		main.insert(main.begin() + oddElementPositionIndex, _oddElement);
 	}
-	// std::cout << "odd element position " << *lastElement << std::endl;
 }
 
 std::vector<int> generateJacobsthal(int n) {
@@ -83,9 +82,7 @@ void PmMergeMe::performBinarySearch(std::vector<element>& main, element& element
 	int low = 0;
 	int high = findPair(main, elementToInsert);
 
-	// std::cout << "find pair returned "<< high << std ::endl;
 	if (high < 0){
-		// std::cout << "Error in find PairRRR for element " << elementToInsert.number << "with partner "<< elementToInsert.partner << std::endl;
 		return ;
 	}
 	while (low <= high){
@@ -140,12 +137,10 @@ std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pa
 	}
 	std::vector<element> main;
 	std::vector<element> pend;
-	//I think I am losing one element in the end here
 	for (size_t i = 0; i < pairedVector.size(); i += 2){
 		if ((i + 1) > pairedVector.size() - 1){
 			break; 
 		}
-		// std::cout << "elements " << pairedVector[i].number << " -- " << pairedVector[i + 1].number << std::endl;
 		if (pairedVector[i].number > pairedVector[i + 1].number){
 			element mainElement = pairedVector[i];
 			element pendElement = pairedVector[i + 1];
@@ -162,16 +157,10 @@ std::vector<element> PmMergeMe::recursivelySortElements(std::vector<element>& pa
 			pend.push_back(pendElement);
 		}
 	}
-	// std::cout << "size is ---> " << pairedVector.size() << std::endl;
 	if (pairedVector.size() % 2 != 0){
-		// std::cout << "this is the number -> " << pairedVector[pairedVector.size() - 1].number << std::endl;
 		pend.push_back(pairedVector[pairedVector.size() - 1]);
 	}
 	main = recursivelySortElements(main);
-	// std::cout << "main: ";
-	// printElementVector(main);
-	// printElementVector(pend);
-	// std::cout << "yoooo " << std::endl;
 	insertElements(main, pend);
 
 	return main;
