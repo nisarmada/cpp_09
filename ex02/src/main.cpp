@@ -1,4 +1,4 @@
-#include "../include/PmergeMe.hpp"
+#include "../include/PmMergeMe.hpp"
 
 int main (int ac, char* av[]) {
 	if (ac <= 2) {

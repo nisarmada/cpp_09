@@ -213,8 +213,10 @@ void printElementVector(std::vector<element>& vector){
 }
 
 static void printDuration(double durationV, double durationD, size_t size){
-	std::cout << "Time to process a range of " << size << " elements with std::vector : " << durationV << " us" << std::endl;
-	std::cout << "Time to process a range of " << size << " elements with std::deque : " << durationD << " us" << std::endl;
+	std::cout << "Time to process a range of " << size << " elements with std::vector : " << \
+	std::fixed << std::setprecision(5) <<  durationV << " us" << std::endl;
+	std::cout << "Time to process a range of " << size << " elements with std::deque : " << \
+	std::fixed << std::setprecision(5) << durationD << " us" << std::endl;
 }
 
 void runPmMerge(char* av[]) {
