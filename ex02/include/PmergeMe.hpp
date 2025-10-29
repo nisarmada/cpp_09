@@ -35,6 +35,8 @@ class PmMergeMe {
 		void performMergeInsertion(std::vector<int>& vector);
 		std::vector<element> recursivelySortElements(std::vector<element>& pairedVector);
 		void insertElements(std::vector<element>& main, std::vector<element>& pend);
+		void performBinarySearch(std::vector<element>& main, element& elementToInsert);
+		int findPair(std::vector<element>& main, element& elementToInsert);
 };
 
 void runPmMerge(char* av[]);
