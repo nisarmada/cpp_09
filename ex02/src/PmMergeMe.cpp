@@ -189,7 +189,7 @@ void PmMergeMe::sortAndDisplayResults() {
 		addOddElement(tempVector);
 	}
 
-	// std::cout << "YPPPP" << std::endl;
+	std::cout << "vector" << std::endl;
 	printVector (_vector, "Before");
 	printVector(tempVector, "After");
 }

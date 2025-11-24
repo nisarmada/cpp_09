@@ -38,5 +38,5 @@ class PmMergeMeD {
 };
 
 std::deque<int> convertToDeque(char* av[]);
-void printDeque(std::vector<int>& deque, size_t blockSize);
+void printDeque(std::deque<int>& deque, std::string beforeOrAfter);
 void printElementDeque(std::deque<element>& deque);

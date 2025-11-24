@@ -179,22 +179,19 @@ void PmMergeMeD::sortAndDisplayResults() {
 	if (_oddElement != -1) {
 		addOddElement(tempDeque);
 	}
+
+	std::cout << "deque" << std::endl;
+	printDeque(_deque, "before");
+	printDeque(tempDeque, "after");
 }
 
 
-void printDeque(std::vector<int>& deque, size_t blockSize) {
-	std::cout << "{";
-	for (unsigned int i = 0; i < deque.size(); i++) {
-		
-		if (blockSize > 0 && i > 0 && i % blockSize == 0) {
-			std::cout << "| ";
-		}
-		std::cout << deque[i];
-		if (i == deque.size() - 1)
-			break;
-		std::cout << ", ";
+void printDeque(std::deque<int>& deque, std::string beforeOrAfter) {
+	std::cout << beforeOrAfter << ": ";
+	for (size_t i = 0; i < deque.size(); i++){
+		std::cout << deque[i] << " ";
 	}
-	std::cout << "}" << std::endl;
+	std::cout << std::endl;
 }
 
 void printElementDeque(std::deque<element>& deque){
