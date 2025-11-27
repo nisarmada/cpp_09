@@ -6,6 +6,11 @@ int main (int ac, char* av[]) {
 		return 1;
 	}
 	try {
+		std::string argument = av[1];
+		if (argument.empty()){
+			std::cerr << "Error: Empty Input\n";
+			return 1;
+		}
 		RPN calculation(av[1]);
 		// calculation.parseExpression(av[1]);
 	} catch (std::exception& e) {
