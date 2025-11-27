@@ -89,25 +89,15 @@ void RPN::parseExpression(const std::string& expression) {
 				multiplicationOperation();
 			}
 			else {
-				try {
-					divisionOperation();
-				} catch (std::exception& e) {
-					std::cerr << "Error: " << e.what() << std::endl; 
-				}
+				divisionOperation();
 			}
 		}
 		else {
-			try {
 				if (!isValidNumber(token))
 					throw std::invalid_argument("Error input is invalid " + token);
 				int number = std::stoi(token);
 				this->Stack.push(number);
-				// std::cout << "number added: " << number << std::endl;
 			}
-			catch (std::exception& e) {
-				std::cerr << "Error: argument is not an int " << e.what() << std::endl;
-			}
-		}
 	}
 	if (this->Stack.size() > 1)
 		throw std::runtime_error("Invalid number of arguments in the stack");

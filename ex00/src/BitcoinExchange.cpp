@@ -26,7 +26,6 @@ void BitcoinExchange::parseLine(const std::string& line) { //We definitely need 
 
 	std::getline(iss, dateStr, ',');
 	std::getline(iss, valueStr);
-	// std::cout << "line  is : " << dateStr << "-" << valueStr << std::endl;
 	Date date(dateStr);
 	std::istringstream valueCheck(valueStr);
 	float value;
