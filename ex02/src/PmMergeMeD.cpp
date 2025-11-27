@@ -75,9 +75,25 @@ void PmMergeMeD::performBinarySearch(std::deque<element>& main, element& element
 	int low = 0;
 	int high = findPair(main, elementToInsert);
 
+	// If partner not found, search from the beginning to find correct position
 	if (high < 0){
-		return ;
+		// Search the entire main chain for the correct insertion point
+		low = 0;
+		high = main.size();
+		while (low < high){
+			int middle = low + (high - low) / 2;
+			if (main[middle].number >= elementToInsert.number){
+				high = middle;
+			}
+			else {
+				low = middle + 1;
+			}
+		}
+		main.insert(main.begin() + low, elementToInsert);
+		return;
 	}
+	
+	// Standard binary search with upper bound at partner position
 	while (low <= high){
 		int middle = low + (high - low) / 2;
 		if (main[middle].number >= elementToInsert.number){
@@ -91,7 +107,11 @@ void PmMergeMeD::performBinarySearch(std::deque<element>& main, element& element
 }
 
 void PmMergeMeD::insertElements(std::deque<element>& main, std::deque<element>& pend){
-	main.insert(main.begin(), pend[0]);
+	if (pend.empty()) {
+		return;
+	}
+	// Insert first element of pend using binary search instead of blindly at beginning
+	performBinarySearch(main, pend[0]);
 	pend.erase(pend.begin());
 	size_t pendSize = pend.size();
 	std::deque<bool> inserted(pendSize, false);
@@ -149,7 +169,10 @@ std::deque<element> PmMergeMeD::recursivelySortElements(std::deque<element>& pai
 		}
 	}
 	if (pairedDeque.size() % 2 != 0){
-		pend.push_back(pairedDeque[pairedDeque.size() - 1]);
+		element oddElement = pairedDeque[pairedDeque.size() - 1];
+		// Set partner to INT_MAX to indicate full search is needed
+		oddElement.partner = std::numeric_limits<int>::max();
+		pend.push_back(oddElement);
 	}
 
 	main = recursivelySortElements(main);

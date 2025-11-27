@@ -8,6 +8,7 @@
 #include <vector>
 #include <chrono>
 #include <iomanip>
+#include <limits>
 
 typedef struct s_element{
 	int number;
